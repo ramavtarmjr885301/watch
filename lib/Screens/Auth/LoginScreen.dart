@@ -2,11 +2,16 @@
 
 
 
+import 'dart:io';
+
+
+
 import 'package:firebase_auth/firebase_auth.dart';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:google_sign_in/google_sign_in.dart';
+import 'package:watch/Helper/Dialogs.dart';
 import 'package:watch/Screens/HomeScreen.dart';
 import 'package:watch/main.dart';
 
@@ -24,8 +29,8 @@ class _LoginScreenState extends State<LoginScreen> {
     // TODO: implement initState
     super.initState();
     SystemChrome.setEnabledSystemUIMode(SystemUiMode.edgeToEdge);
-    SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle(statusBarColor: Colors.transparent));
-    Future.delayed(Duration(microseconds: 500),
+    SystemChrome.setSystemUIOverlayStyle(const SystemUiOverlayStyle(statusBarColor: Colors.transparent));
+    Future.delayed(const Duration(microseconds: 500),
     
     (){
       setState(() {
@@ -35,18 +40,29 @@ class _LoginScreenState extends State<LoginScreen> {
     );
   }
   _handleGoogleBtnClick(){
+    //For showing progressbar
+    Dialogs.showProgressBar(context);
     _signInWithGoogle().then((user) {
-    //  log('User:${user.user}');
-    //  log('\UserAddInformation:${user.additionalUserInfo}' as int);
+      Navigator.pop(context);
+      if(user!=null)
+      {
+         print('User:${user.user}');
+     print('\UserAddInformation:${user.additionalUserInfo}' );
     
        Navigator.pushReplacement(
                         context,
                         MaterialPageRoute(
                           builder: (context) => const HomeScreen(),
                         ));
+      }
+    
     });
   }
-  Future<UserCredential> _signInWithGoogle() async {
+  Future<UserCredential?> _signInWithGoogle() async {
+   try{
+
+
+ await InternetAddress.lookup('google.com');
   // Trigger the authentication flow
   final GoogleSignInAccount? googleUser = await GoogleSignIn().signIn();
 
@@ -61,6 +77,17 @@ class _LoginScreenState extends State<LoginScreen> {
 
   // Once signed in, return the UserCredential
   return await FirebaseAuth.instance.signInWithCredential(credential);
+
+   }catch(e){
+    print('\n Please check your internet connection:$e');
+    final message= SnackBar(content: Center(child: Text("Please check your internet connection")),
+    backgroundColor: Colors.amber,
+    behavior: SnackBarBehavior.floating,
+    
+    );
+    ScaffoldMessenger.of(context).showSnackBar(message);
+   }
+   return null;
 }
 
   @override
