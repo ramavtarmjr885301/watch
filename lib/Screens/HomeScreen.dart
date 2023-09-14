@@ -1,5 +1,7 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:google_sign_in/google_sign_in.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -9,6 +11,11 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
+  //Sign Out Function
+_signOut()async{
+  await FirebaseAuth.instance.signOut();
+  await GoogleSignIn().signOut();
+}
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -24,7 +31,9 @@ class _HomeScreenState extends State<HomeScreen> {
       floatingActionButton: Padding(
         padding: const EdgeInsets.only(bottom: 40, right: 20),
         child: FloatingActionButton(
-          onPressed: () {},
+          onPressed: () {
+            _signOut();
+          },
           child: Icon(Icons.add),
         ),
       ),
