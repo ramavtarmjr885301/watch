@@ -1,6 +1,6 @@
 # watch
 
-A new Flutter project.
+It is a real time chatting Application developed using Flutter Framework.
 
 ## Getting Started
 
